@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_PRISMA_URL")
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  username           String   @unique
+  email              String   @unique
+  responsavel        String
+  nucleo             String
+  password           String
+  role               String   @default("user")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Preparo {
+  id                 String   @id @default(uuid())
+  mestrePreparo      String
+  mestreAuxiliar     String
+  nucleo             String
+  observacao         String?
+  data               DateTime
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  apuros             Apuro[]
+}
+
+model Apuro {
+  id                 String   @id @default(uuid())
+  preparoId          String
+  mariri             String
+  chacrona           String?
+  quantidadeLitro    Float
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  vidros             Vidro[]
+  preparo            Preparo  @relation(fields: [preparoId], references: [id], onDelete: Cascade)
+}
+
+model Vidro {
+  id                 String   @id @default(uuid())
+  apuroId            String
+  quantidadeLitro    Float
+  status             String   @default("disponivel")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  retornoId          String?
+
+  apuro              Apuro    @relation(fields: [apuroId], references: [id], onDelete: Cascade)
+  retorno            Retorno? @relation(fields: [retornoId], references: [id], onDelete: Cascade)
+  sessoes            Sessao[] @relation("VidroSessao")
+}
+
+model Sessao {
+  id                 String   @id @default(uuid())
+  tipo               String
+  descricao          String
+  data               DateTime
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  vidros             Vidro[]  @relation("VidroSessao")
+  retorno            Retorno?
+}
+
+model Retorno {
+  id                 String   @id @default(uuid())
+  sessaoId           String   @unique  
+  quantidadeRetorno  Float 
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+
+  vidros             Vidro[]
+  sessao             Sessao   @relation(fields: [sessaoId], references: [id], onDelete: Cascade)
+}
