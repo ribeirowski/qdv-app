@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "ne xt lint",
+    "lint": "next lint",
     "generate": "prisma generate",
     "migration": "prisma migrate dev",
     "studio": "prisma studio"
