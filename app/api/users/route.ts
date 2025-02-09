@@ -3,7 +3,7 @@ import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 import { ERROR_MESSAGES } from "@/lib/errors";
 
-export async function GET_ALL() {
+export async function GET() {
   try {
     const users = await prisma.user.findMany({
       select: { id: true, email: true, responsavel: true, nucleo: true, role: true },
